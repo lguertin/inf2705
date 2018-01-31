@@ -1,0 +1,40 @@
+Q1: Supposons que les coordonnées du modèle soient exprimées dans un système
+    de coordonnées « main gauche » (au lieu de l'habituel « main droite »).
+    Comment devrait-on alors modifier la matrice 4x4 servant à la rotation
+    afin de préserver le même effet visuel d'une rotation positive ?  Quelle
+    serait la nouvelle matrice pour une rotation autour de l'axe des Z ?
+
+Réponse 1:
+	L'axe des x serait inversé, mais celui des z et des y resteraient dans le
+	même sens. Il faudrait donc ajouter un signe moins pour l'axe des x.
+
+		[ -cos(phi)	-sin(phi)	0	0 ]
+		[ -sin(phi)	cos(phi)	0	0 ]	
+		[ 0			0			1	0 ]
+		[ 0			0			0 	1 ]
+
+
+Q2: Dans ce TP, on peut déplacer la bestiole avec les flèches du clavier ou
+    encore lancer un déplacement « automatique » avec la touche 'espace'.
+    La bestiole se déplace alors dans différentes directions, entre en
+    collision avec les parois du cube qui la contient et son mouvement (son
+    déplacement) change alors de direction.
+
+    Lorsque la bestiole se déplace ainsi, comment peut-on toujours montrer
+    la bestiole se déplaçant en regardant vers l'avant, c'est-à-dire dans le
+    sens de son mouvement. Comment faire en sorte que la tête (et le corps)
+    soit toujours dirigée dans le sens de son mouvement ?
+    Décrivez (avec assez de détails) comment vous implanteriez ceci dans ce TP.
+
+Réponse 2:
+	Premièrement, nous allons modifier la direction du corps dans la fonction
+	du calcul de la physique de la bestiole. En utilisant les vecteurs de vitesse
+	et de position, il est possible de calculer l'angle dans lequel se dirigera le corps. 		
+	Deuxièmement, en utilisant la formule tan(theta) = vitesse en y/vitesse en x, nous pouvons 
+	alors isoler theta pour obtenir theta = arctan(vitesse en y/vitesse en x). En utilisant
+	les vecteurs de sens déjà définies statiquement, nous savons dans quel quadrant
+	il va se diriger et nous n'avons qu'à additionner l'angle theta. Cette rotation
+	s'effectuera selon l'axe des z. Il faut aussi enlever les lignes de codes qui
+	font en sorte que la bestiole tourne sur elle-même.
+
+

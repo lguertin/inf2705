@@ -1,0 +1,4 @@
+    q:  Quitter l'application
+    x:  Activer/désactiver l'affichage des axes
+    v:  Recharger les fichiers des nuanceurs et recréer le programme
+    g:  Permuter l'affichage en fil de fer ou plein
