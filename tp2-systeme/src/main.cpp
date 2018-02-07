@@ -163,9 +163,11 @@ public:
 
    void avancerPhysique()
    {
-      const float dt = 0.5; // intervalle entre chaque affichage (en secondes)
-      rotation += dt * vitRotation;
-      revolution += dt * vitRevolution;
+	  if ( !estSelectionne ) {
+		  const float dt = 0.5; // intervalle entre chaque affichage (en secondes)
+		  rotation += dt * vitRotation;
+		  revolution += dt * vitRevolution;
+	  }
    }
 
    std::vector<CorpsCeleste*> enfants; // la liste des enfants
@@ -176,7 +178,7 @@ public:
    float vitRotation;    // la vitesse de rotation
    float vitRevolution;  // la vitesse de révolution
    glm::vec4 couleur;    // la couleur du corps
-   //bool estSelectionne;  // le corps est sélectionné ?
+   bool estSelectionne;  // le corps est sélectionné ?
    //glm::vec3 couleurSel; // la couleur en mode sélection
 };
 
@@ -392,8 +394,8 @@ void afficherQuad( GLfloat alpha ) // le plan qui ferme les solides
    // partie 1: modifs ici ...
    // ...
    matrModel.PushMatrix(); {
-        matrModel.Translate(0.0, 0.0, etat.planCoupe.w);
-        matrModel.Rotate(etat.angleCoupe, 1.0, 0.0, 0.0);
+        matrModel.Translate(0.0, 0.0, -etat.planCoupe.w);
+        matrModel.Rotate(etat.angleCoupe, 0.0, 1.0, 0.0);
         glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
         glEnable (GL_BLEND);
         glBindVertexArray( vao );
@@ -452,13 +454,18 @@ void FenetreTP::afficherScene( )
    // afficher le modèle et tenir compte du stencil et du plan de coupe
    // partie 1: modifs ici ...
    glEnable( GL_STENCIL_TEST );
-   glStencilFunc( GL_ALWAYS, 1, 1 );
-   glStencilOp( GL_KEEP, GL_KEEP, GL_REPLACE );
+   glStencilFunc(GL_ALWAYS, 1, 1);
+   glStencilOp( GL_INCR, GL_INCR, GL_INCR);
+   glEnable( GL_CLIP_PLANE0 ); 
    // TODO
    afficherModele();
-
+   glDisable (GL_CLIP_PLANE0 ); 
+   
+   glStencilFunc(GL_EQUAL, 1, 1);
+   afficherQuad( 1.0 );
    // en plus, dessiner le plan en transparence pour bien voir son étendue
    afficherQuad( 0.25 );
+   glDisable(GL_STENCIL_TEST);
 }
 
 void FenetreTP::redimensionner( GLsizei w, GLsizei h )

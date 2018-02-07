@@ -14,14 +14,17 @@ layout(location=3) in vec4 Color;
 
 out Attribs {
    vec4 couleur;
-   // float clipDistance;
+   //float clipDistance;
 } AttribsOut;
 
 void main( void )
 {
    // transformation standard du sommet
    gl_Position = matrProj * matrVisu * matrModel * Vertex;
-
+   vec4 posOeil = matrModel * Vertex;
+   gl_ClipDistance[0] = dot( planCoupe, posOeil );
+   
    // couleur du sommet
    AttribsOut.couleur = Color;
+
 }
