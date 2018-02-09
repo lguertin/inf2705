@@ -24,7 +24,6 @@ void main()
       gl_ClipDistance[0] = -AttribsIn[i].clipDistance;
       gl_Position = gl_in[i].gl_Position;
       AttribsOut.couleur = AttribsIn[i].couleur;
-      AttribsOut.couleurPoleRechauffe = AttribsIn[i].couleurPoleRechauffe;
       AttribsOut.profondeur = AttribsIn[i].profondeur;
       AttribsOut.proportionLatitude = AttribsIn[i].proportionLatitude;
       EmitVertex();
@@ -37,8 +36,8 @@ void main()
       gl_ClipDistance[0] = AttribsIn[i].clipDistance;
       gl_Position = gl_in[i].gl_Position;
       AttribsOut.couleur = AttribsIn[i].couleur;
-           AttribsOut.profondeur = AttribsIn[i].profondeur;
-      AttribsOut.proportionLatitude =             		  	 	AttribsIn[i].proportionLatitude;
+      AttribsOut.profondeur = AttribsIn[i].profondeur;
+      AttribsOut.proportionLatitude = AttribsIn[i].proportionLatitude;
       EmitVertex();
    }
    EndPrimitive();

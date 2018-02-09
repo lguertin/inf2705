@@ -441,6 +441,19 @@ void afficherModele()
     Soleil.afficher();
 }
 
+void verifierSelectionCorpsCelestres(GLubyte couleurSel[3], std::vector<CorpsCeleste *> enfants) {
+    std::vector<CorpsCeleste *>::iterator it;
+    for (it = enfants.begin(); it != enfants.end(); it++)
+    {
+        if (couleurSel[0] == floor((*it)->couleur.r*255) && couleurSel[1] == floor((*it)->couleur.g*255) && couleurSel[2] == floor((*it)->couleur.b*255)) {
+            (*it)->estSelectionne = true;
+            break;
+        } else {
+            verifierSelectionCorpsCelestres(couleurSel, (*it)->enfants);
+        }
+    }
+}
+
 void FenetreTP::afficherScene()
 {
     // effacer l'ecran et le tampon de profondeur et le stencil
@@ -472,6 +485,10 @@ void FenetreTP::afficherScene()
 
     if (etat.modeSelection)
     {
+		glEnable(GL_CLIP_PLANE0);
+        // TODO
+        afficherModele();
+        glDisable(GL_CLIP_PLANE0);
         glFinish();
 
         GLint cloture[4];
@@ -484,28 +501,6 @@ void FenetreTP::afficherScene()
         glReadPixels(posX, posY, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, couleur);
 
         verifierSelectionCorpsCelestres(couleur, Soleil.enfants);
-        /*if (couleur[0] == 1.0 && couleur[1] == 1.0 && couleur[2] == 0.0)
-            Soleil.estSelectionne = true;
-        else if (couleur[0] == 0.5 && couleur[1] == 0.5 && couleur[2] == 1.0)
-            Terre.estSelectionne = true;
-        else if (couleur[0] == 0.6 && couleur[1] == 0.6 && couleur[2] == 0.6)
-            Lune.estSelectionne = true;
-        else if (couleur[0] == 0.6 && couleur[1] == 1.0 && couleur[2] == 0.5)
-            Mars.estSelectionne = true;
-        else if (couleur[0] == 0.4 && couleur[1] == 0.4 && couleur[2] == 0.8)
-            Phobos.estSelectionne = true;
-        else if (couleur[0] == 0.5 && couleur[1] == 0.5 && couleur[2] == 0.1)
-            Deimos.estSelectionne = true;
-        else if (couleur[0] == 1.0 && couleur[1] == 0.5 && couleur[2] == 0.5)
-            Jupiter.estSelectionne = true;
-        else if (couleur[0] == 0.7 && couleur[1] == 0.4 && couleur[2] == 0.5)
-            Io.estSelectionne = true;
-        else if (couleur[0] == 0.8 && couleur[1] == 0.4 && couleur[2] == 0.8)
-            Europa.estSelectionne = true;
-        else if (couleur[0] == 0.3 && couleur[1] == 0.6 && couleur[2] == 0.1)
-            Ganymede.estSelectionne = true;
-        else if (couleur[0] == 0.7 && couleur[1] == 0.5 && couleur[2] == 0.1)
-            Callisto.estSelectionne = true;*/
     }
     else
     {
@@ -524,19 +519,6 @@ void FenetreTP::afficherScene()
         // en plus, dessiner le plan en transparence pour bien voir son étendue
         afficherQuad(0.25);
         glDisable(GL_STENCIL_TEST);
-    }
-}
-
-void verifierSelectionCorpsCelestres(GLubyte couleurSel[3], std::vector<CorpsCeleste *> enfants) {
-    std::vector<CorpsCeleste *>::iterator it;
-    for (it = enfants.begin(); it != enfants.end(); it++)
-    {
-        if (couleurSel[0] == (*it)->couleur.r && couleurSel[1] == (*it)->couleur.g && couleurSel[2] == (it*)->couleur.b) {
-            (*it)->estSelectionne = true;
-            break;
-        } else {
-            verifierSelectionCorpsCelestres(couleurSel, (it*)->enfants);
-        }
     }
 }
 

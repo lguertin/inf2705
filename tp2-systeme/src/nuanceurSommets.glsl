@@ -14,7 +14,9 @@ layout(location=3) in vec4 Color;
 
 out Attribs {
    vec4 couleur;
-   //float clipDistance;
+   float clipDistance;
+   float profondeur;
+   float proportionLatitude;
 } AttribsOut;
 
 void main( void )
@@ -22,9 +24,10 @@ void main( void )
    // transformation standard du sommet
    gl_Position = matrProj * matrVisu * matrModel * Vertex;
    vec4 posOeil = matrModel * Vertex;
-   gl_ClipDistance[0] = dot( planCoupe, posOeil );
+   AttribsOut.clipDistance = dot( planCoupe, posOeil );
+   AttribsOut.profondeur = -(matrVisu*matrModel*Vertex).z;
+   //AttribsOut.proportionLatitude = posOeil.z;
    
    // couleur du sommet
    AttribsOut.couleur = Color;
-
 }

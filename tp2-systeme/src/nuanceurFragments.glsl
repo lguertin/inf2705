@@ -6,6 +6,8 @@ const float finAttenuation = 50.0;
 
 in Attribs {
    vec4 couleur;
+   float profondeur;
+   float proportionLatitude;
 } AttribsIn;
 
 out vec4 FragColor;
