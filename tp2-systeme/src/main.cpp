@@ -121,6 +121,11 @@ class CorpsCeleste
             }
 
             // afficher le parent
+             if (couleur.w < 1.0)
+                {
+                    glEnable(GL_BLEND);
+                    glDepthMask(GL_FALSE);
+                }
             matrModel.PushMatrix();
             {
                 matrModel.Rotate(rotation, 0, 0, 1);  // rotation sur lui-même
@@ -130,11 +135,7 @@ class CorpsCeleste
                 // la couleur du corps
                 glVertexAttrib4fv(locColor, glm::value_ptr(couleur));
 
-                if (couleur.w < 1.00)
-                {
-                    glEnable(GL_BLEND);
-                    glDepthMask(GL_FALSE);
-                }
+               
 
                 switch (etat.modele)
                 {
@@ -153,17 +154,19 @@ class CorpsCeleste
                     break;
                 }
 
-                if (couleur.w < 1.0)
-                {
-                    glDepthMask(GL_TRUE);
-                    glDisable(GL_BLEND);
-                }
+                
             }
             matrModel.PopMatrix();
             glUniformMatrix4fv(locmatrModel, 1, GL_FALSE, matrModel);
         }
         matrModel.PopMatrix();
         glUniformMatrix4fv(locmatrModel, 1, GL_FALSE, matrModel);
+
+        if (couleur.w < 1.0)
+            {
+                glDepthMask(GL_TRUE);
+                glDisable(GL_BLEND);
+            }
     }
 
     void avancerPhysique()
@@ -506,6 +509,7 @@ void FenetreTP::afficherScene()
     {
         // afficher le modèle et tenir compte du stencil et du plan de coupe
         // partie 1: modifs ici ...
+        
         glEnable(GL_STENCIL_TEST);
         glStencilFunc(GL_ALWAYS, 1, 1);
         glStencilOp(GL_INCR, GL_INCR, GL_INCR);
@@ -524,7 +528,10 @@ void FenetreTP::afficherScene()
 
 void FenetreTP::redimensionner(GLsizei w, GLsizei h)
 {
-    glViewport(0, 0, w, h);
+    GLfloat h2 = 0.5*h;
+    glViewportIndexedf(1, 0, 0, w, h);
+    glViewportIndexedf(0, 0, 0, w, h2);
+    //glViewport( 0, 0, w,h);
 }
 
 void FenetreTP::clavier(TP_touche touche)
@@ -689,6 +696,7 @@ int main(int argc, char *argv[])
     // allouer des ressources et définir le contexte OpenGL
     fenetre.initialiser();
 
+  
     bool boucler = true;
     while (boucler)
     {
@@ -697,7 +705,10 @@ int main(int argc, char *argv[])
 
         // affichage
         fenetre.afficherScene();
-        fenetre.swap();
+        if (!etat.modeSelection){
+            fenetre.swap();
+        }
+        
 
         // récupérer les événements et appeler la fonction de rappel
         boucler = fenetre.gererEvenement();
