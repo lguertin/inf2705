@@ -99,6 +99,8 @@ class CorpsCeleste
                                                                vitRotation(vitRot), vitRevolution(vitRev),
                                                                couleur(coul)
     {
+        this.estSelectionne = false;
+        this.estClickDejaEnfoncee = false;
     }
 
     void ajouteEnfant(CorpsCeleste &bebe)
@@ -188,6 +190,7 @@ class CorpsCeleste
     float vitRevolution;                 // la vitesse de révolution
     glm::vec4 couleur;                   // la couleur du corps
     bool estSelectionne;                 // le corps est sélectionné ?
+    bool estClickDejaEnfoncee;
     //glm::vec3 couleurSel;                // la couleur en mode sélection
 };
 
@@ -449,12 +452,43 @@ void verifierSelectionCorpsCelestres(GLubyte couleurSel[3], std::vector<CorpsCel
     for (it = enfants.begin(); it != enfants.end(); it++)
     {
         if (couleurSel[0] == floor((*it)->couleur.r*255) && couleurSel[1] == floor((*it)->couleur.g*255) && couleurSel[2] == floor((*it)->couleur.b*255)) {
-            (*it)->estSelectionne = true;
+            if (!(*it)->estClickDejaEnfoncee) {
+                (*it)->estSelectionne = !(*it)->estSelectionne;
+                (*it)->estClickDejaEnfoncee = true;
+            }
             break;
         } else {
             verifierSelectionCorpsCelestres(couleurSel, (*it)->enfants);
         }
     }
+}
+
+void reinitialiserClickPourCorps(std::vector<CorpsCeleste *> enfants) {
+    std::vector<CorpsCeleste *>::iterator it;
+    for (it = enfants.begin(); it != enfants.end(); it++)
+    {
+        (*it)->estClickDejaEnfoncee = false;
+        verifierSelectionCorpsCelestres(couleurSel, (*it)->enfants);
+    }
+}
+
+void processerSelection() {
+    glEnable(GL_CLIP_PLANE0);
+
+    afficherModele();
+    glDisable(GL_CLIP_PLANE0);
+    glFinish();
+
+    GLint cloture[4];
+    glGetIntegerv(GL_VIEWPORT, cloture);
+    GLint posX = etat.sourisPosPrec.x, posY = cloture[3] - etat.sourisPosPrec.y;
+
+    glReadBuffer(GL_BACK);
+
+    GLubyte couleur[3];
+    glReadPixels(posX, posY, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, couleur);
+
+    verifierSelectionCorpsCelestres(couleur, Soleil.enfants);
 }
 
 void FenetreTP::afficherScene()
@@ -486,27 +520,7 @@ void FenetreTP::afficherScene()
     glUniform4fv(locplanCoupe, 1, glm::value_ptr(etat.planCoupe));
     glUniform1i(loccoulProfondeur, etat.coulProfondeur);
 
-    if (etat.modeSelection)
-    {
-		glEnable(GL_CLIP_PLANE0);
-        // TODO
-        afficherModele();
-        glDisable(GL_CLIP_PLANE0);
-        glFinish();
-
-        GLint cloture[4];
-        glGetIntegerv(GL_VIEWPORT, cloture);
-        GLint posX = etat.sourisPosPrec.x, posY = cloture[3] - etat.sourisPosPrec.y;
-
-        glReadBuffer(GL_BACK);
-
-        GLubyte couleur[3];
-        glReadPixels(posX, posY, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, couleur);
-
-        verifierSelectionCorpsCelestres(couleur, Soleil.enfants);
-    }
-    else
-    {
+    if (!etat.modeSelection) {
         // afficher le modèle et tenir compte du stencil et du plan de coupe
         // partie 1: modifs ici ...
         
@@ -640,6 +654,7 @@ void FenetreTP::sourisClic(int button, int state, int x, int y)
             break;
         case TP_BOUTON_DROIT: // Sélectionner des objets
             etat.modeSelection = true;
+            processerSelection();
             break;
         }
         etat.sourisPosPrec.x = x;
@@ -648,17 +663,7 @@ void FenetreTP::sourisClic(int button, int state, int x, int y)
     else
     {
         etat.modeSelection = false;
-        Soleil.estSelectionne = false;
-        Terre.estSelectionne = false;
-        Lune.estSelectionne = false;
-        Mars.estSelectionne = false;
-        Phobos.estSelectionne = false;
-        Deimos.estSelectionne = false;
-        Jupiter.estSelectionne = false;
-        Io.estSelectionne = false;
-        Europa.estSelectionne = false;
-        Ganymede.estSelectionne = false;
-        Callisto.estSelectionne = false;
+        reinitialiserClickPourCorps(Soleil.enfants);
     }
 }
 
