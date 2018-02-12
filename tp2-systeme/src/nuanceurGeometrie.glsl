@@ -6,14 +6,10 @@ layout(triangle_strip, max_vertices = 6) out;
 in Attribs {
    vec4 couleur;
    float clipDistance;
-   float profondeur;
-   float proportionLatitude;
 } AttribsIn[];
 
 out Attribs {
    vec4 couleur;
-   float profondeur;
-   float proportionLatitude;
 } AttribsOut;
 
 void main()
@@ -24,8 +20,6 @@ void main()
       gl_ClipDistance[0] = -AttribsIn[i].clipDistance;
       gl_Position = gl_in[i].gl_Position;
       AttribsOut.couleur = AttribsIn[i].couleur;
-      AttribsOut.profondeur = AttribsIn[i].profondeur;
-      AttribsOut.proportionLatitude = AttribsIn[i].proportionLatitude;
       EmitVertex();
    }
    EndPrimitive();
@@ -36,8 +30,6 @@ void main()
       gl_ClipDistance[0] = AttribsIn[i].clipDistance;
       gl_Position = gl_in[i].gl_Position;
       AttribsOut.couleur = AttribsIn[i].couleur;
-      AttribsOut.profondeur = AttribsIn[i].profondeur;
-      AttribsOut.proportionLatitude = AttribsIn[i].proportionLatitude;
       EmitVertex();
    }
    EndPrimitive();

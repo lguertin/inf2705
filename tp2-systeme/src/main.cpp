@@ -517,7 +517,10 @@ void FenetreTP::afficherScene()
         glStencilFunc(GL_EQUAL, 1, 1);
         afficherQuad(1.0);
         // en plus, dessiner le plan en transparence pour bien voir son étendue
+        glEnable(GL_BLEND);
         afficherQuad(0.25);
+        glDisable(GL_BLEND);
+        glDisable(GL_BLEND);
         glDisable(GL_STENCIL_TEST);
     }
 }
