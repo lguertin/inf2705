@@ -4,7 +4,10 @@ Q1: Dans le nuanceur de sommets, si on souhaite calculer la profondeur du
     « out float profondeur = -( matrVisu * matrModel * Vertex ).z; »
 
     Pourquoi doit-on inverser le signe du résultat calculé ?
-
+    
+Reponse 1:
+    Nous désirons inverser le signe puisqu'au lieu de faire le calcul par rapport à la distance que la caméra a bougé, nous faisons le calcul par rapport au déplacement de notre
+    modèle.
 
 Q2: Lorsqu'on calcule la distance à la caméra pour faire un effet de
     profondeur dans le nuanceur de fragments, que se passe-t-il si on
@@ -18,3 +21,6 @@ Q2: Lorsqu'on calcule la distance à la caméra pour faire un effet de
     « d = gl_FragCoord.w; » ?
 
     Comment expliquez-vous les comportements observés dans un cas ou l'autre?
+    
+Reponse 2:
+
