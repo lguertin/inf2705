@@ -99,8 +99,8 @@ class CorpsCeleste
                                                                vitRotation(vitRot), vitRevolution(vitRev),
                                                                couleur(coul)
     {
-        this.estSelectionne = false;
-        this.estClickDejaEnfoncee = false;
+        this->estSelectionne = false;
+        this->estClickDejaEnfoncee = false;
     }
 
     void ajouteEnfant(CorpsCeleste &bebe)
@@ -468,7 +468,7 @@ void reinitialiserClickPourCorps(std::vector<CorpsCeleste *> enfants) {
     for (it = enfants.begin(); it != enfants.end(); it++)
     {
         (*it)->estClickDejaEnfoncee = false;
-        verifierSelectionCorpsCelestres(couleurSel, (*it)->enfants);
+        reinitialiserClickPourCorps((*it)->enfants);
     }
 }
 
@@ -499,7 +499,7 @@ void FenetreTP::afficherScene()
     glUseProgram(progBase);
 
     // définir le pipeline graphique
-    matrProj.Perspective(50.0, (GLdouble)largeur_ / (GLdouble)hauteur_, 0.1, 100.0);
+    matrProj.Perspective(50.0, (GLdouble)largeur_ *2/ (GLdouble)hauteur_, 0.1, 100.0);
     glUniformMatrix4fv(locmatrProjBase, 1, GL_FALSE, matrProj);
 
     camera.definir();
@@ -540,15 +540,16 @@ void FenetreTP::afficherScene()
         glDisable(GL_BLEND);
         glDisable(GL_BLEND);
         glDisable(GL_STENCIL_TEST);
-    }
+    } else {
+		processerSelection();
+	}
 }
 
 void FenetreTP::redimensionner(GLsizei w, GLsizei h)
 {
-    GLfloat h2 = 0.5*h;
-    glViewportIndexedf(1, 0, 0, w, h);
-    glViewportIndexedf(0, 0, 0, w, h2);
-    //glViewport( 0, 0, w,h);
+    GLfloat h2 = 0.5*GLfloat(h);
+    GLfloat v[] = {0,0,GLfloat(w),h2, 0,h2,GLfloat(w),h2};
+    glViewportArrayv(0,2,v);
 }
 
 void FenetreTP::clavier(TP_touche touche)
@@ -657,7 +658,6 @@ void FenetreTP::sourisClic(int button, int state, int x, int y)
             break;
         case TP_BOUTON_DROIT: // Sélectionner des objets
             etat.modeSelection = true;
-            processerSelection();
             break;
         }
         etat.sourisPosPrec.x = x;
@@ -713,9 +713,7 @@ int main(int argc, char *argv[])
 
         // affichage
         fenetre.afficherScene();
-        if (!etat.modeSelection){
-            fenetre.swap();
-        }
+        fenetre.swap();
         
 
         // récupérer les événements et appeler la fonction de rappel
