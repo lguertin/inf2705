@@ -1,5 +1,5 @@
 #version 410
-
+uniform mat4 matrVisu;
 // Définition des paramètres des sources de lumière
 layout (std140) uniform LightSourceParameters
 {
@@ -61,7 +61,18 @@ out vec4 FragColor;
 
 float calculerSpot( in vec3 spotDir, in vec3 L )
 {
-   return( 0.0 );
+   float cosGamma = dot(-L, spotDir);
+   float cosDelta = cos(LightSource[0].spotAngleOuverture);
+   float c = LightSource[0].spotExponent;
+   float fact;
+   if(utiliseDirect)
+		 fact = smoothstep(pow(cosDelta,1.01+c/2),cosDelta, cosGamma);
+   else {
+      if (cosGamma > cosDelta) {
+         fact = pow(cosGamma, c);
+      }
+   }
+   return fact;
 }
 
 vec4 calculerReflexion( in vec3 L, in vec3 N, in vec3 O )
@@ -88,11 +99,11 @@ void main( void )
    // ...
 
    // assigner la couleur finale
-   //FragColor = AttribsIn.couleur;
-   FragColor = calculerReflexion( normalize(AttribsIn.lightDir), normalize(AttribsIn.normal), normalize(AttribsIn.obsVec) );
-
-   // vec4 coul = calculerReflexion( L, N, O );
+   ( typeIllumination == 1) ? 
+		(FragColor = AttribsIn.couleur):		
+		(FragColor = calculerReflexion( normalize(AttribsIn.lightDir), normalize(AttribsIn.normal), normalize(AttribsIn.obsVec) ));
    // ...
-
+   vec3 spotDir = transpose(inverse(mat3(matrVisu))) * (-LightSource[0].spotDirection);
+   FragColor *= calculerSpot(normalize(spotDir), normalize(AttribsIn.lightDir));
    if ( afficheNormales ) FragColor = vec4(normalize(AttribsIn.normal),1.0);
 }

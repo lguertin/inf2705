@@ -1,5 +1,4 @@
 #version 410
-
 // Définition des paramètres des sources de lumière
 layout (std140) uniform LightSourceParameters
 {
@@ -67,25 +66,41 @@ out Attribs {
 
 vec4 calculerReflexion( in vec3 L, in vec3 N, in vec3 O )
 {
-   vec4 ambient = FrontMaterial.emission + FrontMaterial.ambient * LightModel.ambient;
-   ambient += FrontMaterial.ambient * LightSource[0].ambient;
-   return clamp(ambient, 0.0, 1.0);
+   vec4 ambient = FrontMaterial.emission +
+		FrontMaterial.ambient * LightModel.ambient;
+
+	ambient += FrontMaterial.ambient * LightSource[0].ambient;
+
+	vec4 diffuse = FrontMaterial.diffuse *
+		LightSource[0].diffuse *
+		max(dot(L, N), 0.0);
+
+	float reflectionFactor;
+	if(utiliseBlinn) {
+		reflectionFactor = max(0.0, dot(normalize(L + O), N));
+	} else {
+		reflectionFactor = max(0.0, dot(reflect(-L, N), O));
+	}
+
+	vec4 specular = FrontMaterial.specular *
+		LightSource[0].specular *
+		pow(reflectionFactor, FrontMaterial.shininess);
+
+return clamp(ambient + diffuse + specular, 0.0, 1.0);
 }
 
 void main( void )
 {
    // transformation standard du sommet
-   gl_Position = matrProj * matrVisu * matrModel * Vertex;
+   gl_Position = matrVisu * matrModel * Vertex;
    
    //////
    // calculer la normale qui sera interpolée pour le nuanceur de fragment
    vec3 normal = matrNormale * Normal;
    AttribsOut.normal = normal;
 
-   // calculer la position du sommet (dans le repère de la caméra)
-   vec3 pos = vec3( matrVisu * matrModel * Vertex );
-
    // vecteur de la direction de la lumière (dans le repère de la caméra)
+   vec3 pos = vec3( matrVisu * matrModel * Vertex );
    vec3 lightDir = ( matrVisu * LightSource[0].position ).xyz - pos;
    AttribsOut.lightDir = lightDir;
 
@@ -98,7 +113,7 @@ void main( void )
 	
    // couleur du sommet
    if (typeIllumination == 1)
-      AttribsOut.couleur = calculerReflexion( lightDir, normalize(normal), obsVec );
+      AttribsOut.couleur = calculerReflexion( normalize(lightDir), normalize(normal), obsVec );
 	else 
 	   AttribsOut.couleur = Color; // à modifier!
 }

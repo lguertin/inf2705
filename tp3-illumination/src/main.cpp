@@ -469,6 +469,10 @@ void afficherModele()
 
       glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
       // (partie 1: ne pas oublier de calculer et donner une matrice pour les transformations des normales)
+      glm::mat3 matrVM = glm::mat3( matrVisu.getMatr()*matrModel.getMatr() );
+      glm::mat3 matrNormale = glm::inverse( matrVM );
+      glUniformMatrix3fv( locmatrNormale, 1, GL_TRUE, // on transpose
+                          glm::value_ptr( matrNormale ) );
 
       switch ( etat.modele )
       {

@@ -36,13 +36,20 @@ out Attribs {
 
 void main()
 {
+	vec3 V0 = vec3(gl_in[0].gl_Position - gl_in[1].gl_Position);
+	vec3 V1 = vec3(gl_in[2].gl_Position - gl_in[1].gl_Position);
+	vec3 normal = normalize(cross(V1, V0));
+	
+	
    // émettre les sommets
    for ( int i = 0 ; i < gl_in.length() ; ++i )
    {
-      gl_Position = gl_in[i].gl_Position;
+      gl_Position = matrProj * gl_in[i].gl_Position;
       AttribsOut.couleur = AttribsIn[i].couleur;
       AttribsOut.lightDir = AttribsIn[i].lightDir;
-      AttribsOut.normal = AttribsIn[i].normal;
+      (typeIllumination == 0)?
+		(AttribsOut.normal = normal):
+		(AttribsOut.normal = AttribsIn[i].normal);
       AttribsOut.obsVec = AttribsIn[i].obsVec;
       EmitVertex();
    }
