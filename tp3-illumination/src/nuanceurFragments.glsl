@@ -55,6 +55,7 @@ in Attribs {
    vec3 lightDir;
    vec3 normal;
    vec3 obsVec;
+   vec2 texCoord;
 } AttribsIn;
 
 out vec4 FragColor;
@@ -62,15 +63,15 @@ out vec4 FragColor;
 float calculerSpot( in vec3 spotDir, in vec3 L )
 {
    float cosGamma = dot(-L, spotDir);
-   float cosDelta = cos(LightSource[0].spotAngleOuverture);
+   float cosDelta = cos(radians(LightSource[0].spotAngleOuverture));
    float c = LightSource[0].spotExponent;
    float fact;
    if(utiliseDirect)
 		 fact = smoothstep(pow(cosDelta,1.01+c/2),cosDelta, cosGamma);
    else {
-      if (cosGamma > cosDelta) {
-         fact = pow(cosGamma, c);
-      }
+      fact = (cosGamma > cosDelta) ? 
+         pow(cosGamma, c):
+         0.0;
    }
    return fact;
 }
@@ -99,11 +100,12 @@ void main( void )
    // ...
 
    // assigner la couleur finale
-   ( typeIllumination == 1) ? 
-		(FragColor = AttribsIn.couleur):		
-		(FragColor = calculerReflexion( normalize(AttribsIn.lightDir), normalize(AttribsIn.normal), normalize(AttribsIn.obsVec) ));
+   FragColor = ( typeIllumination == 1) ? 
+		AttribsIn.couleur :		
+		calculerReflexion( normalize(AttribsIn.lightDir), normalize(AttribsIn.normal), normalize(AttribsIn.obsVec) );
    // ...
-   vec3 spotDir = transpose(inverse(mat3(matrVisu))) * (-LightSource[0].spotDirection);
+   vec3 spotDir = transpose(inverse(mat3(matrVisu))) * (LightSource[0].spotDirection);
    FragColor *= calculerSpot(normalize(spotDir), normalize(AttribsIn.lightDir));
    if ( afficheNormales ) FragColor = vec4(normalize(AttribsIn.normal),1.0);
+   FragColor = texture(laTexture, AttribsIn.texCoord);
 }

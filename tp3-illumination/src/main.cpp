@@ -383,7 +383,28 @@ void FenetreTP::initialiser()
 	   -1.0, 0.0, 0.0, 	   -1.0, 0.0, 0.0, 	   -1.0, 0.0, 0.0, 	   -1.0, 0.0, 0.0, 	 // P4,P7,P0,P3
 	   0.0, 0.0, 1.0, 	   0.0, 0.0, 1.0, 	   0.0, 0.0, 1.0, 	   0.0, 0.0, 1.0 	 // P4,P5,P7,P6
    };
+   
+    GLfloat texturesCoordDe[2*8*6] = {
+	   0.33, 0.0,      0.66, 0.0,       0.66, 0.33,     0.33, 0.33,
+       0.66, 0.0,      1.0, 0.0,        1.0, 0.33,      0.66, 0.33,
+       0.66, 0.33,     1.0, 0.33,       1.0, 0.66,      0.66, 0.66,
+       0.33, 0.33,     0.66, 0.33,      0.66, 0.66,     0.33, 0.66,
+       0.0, 0.33,      0.33, 0.33,      0.33, 0.66,     0.0, 0.66,
+       0.33, 0.66,      0.66, 0.66,     0.66, 1.0,      0.33, 1.0
+   };
 
+   GLfloat texturesCoordEchec[2*8] = {
+	   0.0, 0.0, 3.0, 0.0, 3.0, 3.0, 0.0, 3.0,       
+       
+       0.0, 0.0, 0.0, 3.0, 3.0, 3.0, 3.0, 0.0
+   };
+   
+    GLfloat texturesCoordAutre[2*4] = {
+	   0.0, 0.0,
+       1.0, 0.0,
+       1.0, 1.0,
+       0.0, 1.0
+   };
    // allouer les objets OpenGL
    glGenVertexArrays( 2, vao );
    glGenBuffers( 5, vbo );
@@ -400,8 +421,25 @@ void FenetreTP::initialiser()
    glBufferData( GL_ARRAY_BUFFER, sizeof(normales), normales, GL_STATIC_DRAW );
    glVertexAttribPointer( locNormal, 3, GL_FLOAT, GL_FALSE, 0, 0 );
    glEnableVertexAttribArray(locNormal);
+   
    // (partie 3) charger le VBO pour les coordonnées de texture
-   // ...
+   //Textures pour le de
+   glBindBuffer( GL_ARRAY_BUFFER, vbo[2] );
+   glBufferData( GL_ARRAY_BUFFER, sizeof(texturesCoordDe), texturesCoordDe, GL_STATIC_DRAW );
+   glVertexAttribPointer( loclaTexture, 3, GL_FLOAT, GL_FALSE, 0, 0 );
+   glEnableVertexAttribArray(loclaTexture);
+   
+   // coordonnees de textures pour l'echec
+   glBindBuffer( GL_ARRAY_BUFFER, vbo[3] );
+   glBufferData( GL_ARRAY_BUFFER, sizeof(texturesCoordEchec), texturesCoordEchec, GL_STATIC_DRAW );
+   glVertexAttribPointer( loclaTexture, 3, GL_FLOAT, GL_FALSE, 0, 0 );
+   glEnableVertexAttribArray(loclaTexture);
+   
+    // coordonnees de textures pour l'autre 
+   glBindBuffer( GL_ARRAY_BUFFER, vbo[4] );
+   glBufferData( GL_ARRAY_BUFFER, sizeof(texturesCoordAutre), texturesCoordAutre, GL_STATIC_DRAW );
+   glVertexAttribPointer( loclaTexture, 3, GL_FLOAT, GL_FALSE, 0, 0 );
+   glEnableVertexAttribArray(loclaTexture);
 
    glBindVertexArray(0);
 
@@ -445,19 +483,22 @@ void afficherModele()
    switch ( varsUnif.texnumero )
    {
    default:
-      //std::cout << "Sans texture" << std::endl;
       break;
    case 1:
-      //std::cout << "Texture 1 DE" << std::endl;
+      glUniform1i( loclaTexture, textures[0] );
+      glActiveTexture( GL_TEXTURE0 );
       break;
    case 2:
-      //std::cout << "Texture 2 ECHIQUIER" << std::endl;
+      glUniform1i( loclaTexture, textures[1] );
+      glActiveTexture( GL_TEXTURE0 );
       break;
    case 3:
-      //std::cout << "Texture 3 METAL" << std::endl;
+      glUniform1i( loclaTexture, textures[2] );
+      glActiveTexture( GL_TEXTURE0 );
       break;
    case 4:
-      //std::cout << "Texture 4 MOSAIQUE" << std::endl;
+      glUniform1i( loclaTexture, textures[3] );
+      glActiveTexture( GL_TEXTURE0 );
       break;
    }
 

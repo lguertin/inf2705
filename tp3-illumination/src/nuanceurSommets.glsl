@@ -62,6 +62,7 @@ out Attribs {
    vec3 lightDir;
    vec3 normal;
    vec3 obsVec;
+   vec2 texCoord;
 } AttribsOut;
 
 vec4 calculerReflexion( in vec3 L, in vec3 N, in vec3 O )
@@ -115,5 +116,7 @@ void main( void )
    if (typeIllumination == 1)
       AttribsOut.couleur = calculerReflexion( normalize(lightDir), normalize(normal), obsVec );
 	else 
-	   AttribsOut.couleur = Color; // à modifier!
+	   AttribsOut.couleur = Color;
+	   
+   AttribsOut.texCoord = TexCoord.st;
 }

@@ -25,6 +25,7 @@ in Attribs {
    vec3 lightDir;
    vec3 normal;
    vec3 obsVec;
+   vec2 texCoord;
 } AttribsIn[];
 
 out Attribs {
@@ -32,6 +33,7 @@ out Attribs {
    vec3 lightDir;
    vec3 normal;
    vec3 obsVec;
+   vec2 texCoord;
 } AttribsOut;
 
 void main()
@@ -51,6 +53,7 @@ void main()
 		(AttribsOut.normal = normal):
 		(AttribsOut.normal = AttribsIn[i].normal);
       AttribsOut.obsVec = AttribsIn[i].obsVec;
+      AttribsOut.texCoord = AttribsIn[i].texCoord;
       EmitVertex();
    }
 }
