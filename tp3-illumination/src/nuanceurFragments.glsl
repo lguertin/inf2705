@@ -98,14 +98,24 @@ vec4 calculerReflexion( in vec3 L, in vec3 N, in vec3 O )
 void main( void )
 {
    // ...
-
    // assigner la couleur finale
-   FragColor = ( typeIllumination == 1) ? 
-		AttribsIn.couleur :		
-		calculerReflexion( normalize(AttribsIn.lightDir), normalize(AttribsIn.normal), normalize(AttribsIn.obsVec) );
+    FragColor = ( typeIllumination == 1) ? 
+            AttribsIn.couleur :		
+            calculerReflexion( normalize(AttribsIn.lightDir), normalize(AttribsIn.normal), normalize(AttribsIn.obsVec) );
+
    // ...
    vec3 spotDir = transpose(inverse(mat3(matrVisu))) * (LightSource[0].spotDirection);
    FragColor *= calculerSpot(normalize(spotDir), normalize(AttribsIn.lightDir));
    if ( afficheNormales ) FragColor = vec4(normalize(AttribsIn.normal),1.0);
-   FragColor = texture(laTexture, AttribsIn.texCoord);
+   vec4 tex = texture(laTexture, AttribsIn.texCoord);
+    
+    vec4 texel = texture(laTexture, AttribsIn.texCoord);
+    if(texnumero != 0) {
+        if (afficheTexelFonce == 1)
+            FragColor *= (texel+1)/2;
+        else if (afficheTexelFonce == 2 && texel.rgb == 0)
+            discard;
+        else
+            FragColor *= texel;
+    }
 }

@@ -384,7 +384,7 @@ void FenetreTP::initialiser()
 	   0.0, 0.0, 1.0, 	   0.0, 0.0, 1.0, 	   0.0, 0.0, 1.0, 	   0.0, 0.0, 1.0 	 // P4,P5,P7,P6
    };
    
-    GLfloat texturesCoordDe[2*8*6] = {
+    GLfloat texturesCoordDe[2*4*6] = {
 	   0.33, 0.0,      0.66, 0.0,       0.66, 0.33,     0.33, 0.33,
        0.66, 0.0,      1.0, 0.0,        1.0, 0.33,      0.66, 0.33,
        0.66, 0.33,     1.0, 0.33,       1.0, 0.66,      0.66, 0.66,
@@ -394,8 +394,7 @@ void FenetreTP::initialiser()
    };
 
    GLfloat texturesCoordEchec[2*8] = {
-	   0.0, 0.0, 3.0, 0.0, 3.0, 3.0, 0.0, 3.0,       
-       
+	   0.0, 0.0, 3.0, 0.0, 3.0, 3.0, 0.0, 3.0,
        0.0, 0.0, 0.0, 3.0, 3.0, 3.0, 3.0, 0.0
    };
    
@@ -425,21 +424,17 @@ void FenetreTP::initialiser()
    // (partie 3) charger le VBO pour les coordonnées de texture
    //Textures pour le de
    glBindBuffer( GL_ARRAY_BUFFER, vbo[2] );
-   glBufferData( GL_ARRAY_BUFFER, sizeof(texturesCoordDe), texturesCoordDe, GL_STATIC_DRAW );
-   glVertexAttribPointer( loclaTexture, 3, GL_FLOAT, GL_FALSE, 0, 0 );
-   glEnableVertexAttribArray(loclaTexture);
+   glBufferData( GL_ARRAY_BUFFER, sizeof(texturesCoordDe), texturesCoordDe, GL_STATIC_DRAW );   
    
    // coordonnees de textures pour l'echec
    glBindBuffer( GL_ARRAY_BUFFER, vbo[3] );
    glBufferData( GL_ARRAY_BUFFER, sizeof(texturesCoordEchec), texturesCoordEchec, GL_STATIC_DRAW );
-   glVertexAttribPointer( loclaTexture, 3, GL_FLOAT, GL_FALSE, 0, 0 );
-   glEnableVertexAttribArray(loclaTexture);
    
-    // coordonnees de textures pour l'autre 
+    // coordonnees de textures pour autres 
    glBindBuffer( GL_ARRAY_BUFFER, vbo[4] );
    glBufferData( GL_ARRAY_BUFFER, sizeof(texturesCoordAutre), texturesCoordAutre, GL_STATIC_DRAW );
-   glVertexAttribPointer( loclaTexture, 3, GL_FLOAT, GL_FALSE, 0, 0 );
-   glEnableVertexAttribArray(loclaTexture);
+   glVertexAttribPointer( locTexCoord, 3, GL_FLOAT, GL_FALSE, 0, 0 );
+   glEnableVertexAttribArray(locTexCoord);
 
    glBindVertexArray(0);
 
@@ -483,22 +478,19 @@ void afficherModele()
    switch ( varsUnif.texnumero )
    {
    default:
+      glBindTexture(GL_TEXTURE_2D, 0);
       break;
    case 1:
-      glUniform1i( loclaTexture, textures[0] );
-      glActiveTexture( GL_TEXTURE0 );
+      glBindTexture(GL_TEXTURE_2D, textures[0]); 
       break;
    case 2:
-      glUniform1i( loclaTexture, textures[1] );
-      glActiveTexture( GL_TEXTURE0 );
+      glBindTexture(GL_TEXTURE_2D, textures[1]); 
       break;
    case 3:
-      glUniform1i( loclaTexture, textures[2] );
-      glActiveTexture( GL_TEXTURE0 );
+      glBindTexture(GL_TEXTURE_2D, textures[2]);
       break;
    case 4:
-      glUniform1i( loclaTexture, textures[3] );
-      glActiveTexture( GL_TEXTURE0 );
+      glBindTexture(GL_TEXTURE_2D, textures[3]);
       break;
    }
 

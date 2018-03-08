@@ -111,11 +111,10 @@ void main( void )
                          vec3( 0.0, 0.0, 1.0 ) ); // on considère que l'observateur (la caméra) est à l'infini dans la direction (0,0,1)
    AttribsOut.obsVec = obsVec;
 	////////////////
-	
-   // couleur du sommet
+   // couleur du sommet  
    if (typeIllumination == 1)
       AttribsOut.couleur = calculerReflexion( normalize(lightDir), normalize(normal), obsVec );
-	else 
+	else
 	   AttribsOut.couleur = Color;
 	   
    AttribsOut.texCoord = TexCoord.st;
