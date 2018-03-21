@@ -136,7 +136,12 @@ void calculerPhysique( )
       // À MODIFIER (partie 1)
       // déplacer les particules en utilisant le nuanceur de rétroaction
       glUseProgram( progRetroaction );
+      glUniform1f( loctempsRetroaction, parametres.temps );
       glUniform1f( locdtRetroaction, etat.enmouvement ? parametres.dt : 0.0 );
+      glUniform1f( locgraviteRetroaction, parametres.gravite);
+      glUniform1f( loctempsMaxRetroaction, parametres.tempsMax );
+      glUniform3fv( locbDimRetroaction, 1, glm::value_ptr(etat.bDim) );
+      glUniform3fv( locpositionPuitsRetroaction, 1, glm::value_ptr(etat.positionPuits) );
 
       glBindBufferBase( GL_TRANSFORM_FEEDBACK_BUFFER, 0, vbo[1] );
 
@@ -162,7 +167,9 @@ void calculerPhysique( )
       // débuter la rétroaction
       glBeginTransformFeedback( GL_POINTS );
       // « dessiner » (en utilisant le vbo[0])
+      glEnable(GL_BLEND);
       glDrawArrays( GL_POINTS, 0, parametres.nparticules );
+      glDisable(GL_BLEND);
       // terminer la rétroaction
       glEndTransformFeedback();
       // réactiver le tramage
