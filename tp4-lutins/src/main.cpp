@@ -149,8 +149,8 @@ void calculerPhysique( )
       // se préparer
       glBindBuffer( GL_ARRAY_BUFFER, vbo[0] );
       glVertexAttribPointer( locpositionRetroaction, 3, GL_FLOAT, GL_FALSE, sizeof(Part), reinterpret_cast<void*>( offsetof(Part,position) ) );
-      glVertexAttribPointer( loccouleurRetroaction, 3, GL_FLOAT, GL_FALSE, sizeof(Part), reinterpret_cast<void*>( offsetof(Part,couleur) ) );
-      glVertexAttribPointer( locvitesseRetroaction, 4, GL_FLOAT, GL_FALSE, sizeof(Part), reinterpret_cast<void*>( offsetof(Part,vitesse) ) );
+      glVertexAttribPointer( loccouleurRetroaction, 4, GL_FLOAT, GL_FALSE, sizeof(Part), reinterpret_cast<void*>( offsetof(Part,couleur) ) );
+      glVertexAttribPointer( locvitesseRetroaction, 3, GL_FLOAT, GL_FALSE, sizeof(Part), reinterpret_cast<void*>( offsetof(Part,vitesse) ) );
       glVertexAttribPointer( loctempsRestantRetroaction, 1, GL_FLOAT, GL_FALSE, sizeof(Part), reinterpret_cast<void*>( offsetof(Part,tempsRestant) ) );
       glEnableVertexAttribArray(locpositionRetroaction);
       glEnableVertexAttribArray(loccouleurRetroaction);
@@ -167,9 +167,7 @@ void calculerPhysique( )
       // débuter la rétroaction
       glBeginTransformFeedback( GL_POINTS );
       // « dessiner » (en utilisant le vbo[0])
-      glEnable(GL_BLEND);
       glDrawArrays( GL_POINTS, 0, parametres.nparticules );
-      glDisable(GL_BLEND);
       // terminer la rétroaction
       glEndTransformFeedback();
       // réactiver le tramage
@@ -591,7 +589,9 @@ void FenetreTP::afficherScene()
 
    // tracer le résultat de la rétroaction
    //glDrawTransformFeedback( GL_POINTS, tfo[0] );
+   glEnable(GL_BLEND);
    glDrawArrays( GL_POINTS, 0, parametres.nparticules );
+   glDisable(GL_BLEND);
 
    glBindTexture( GL_TEXTURE_2D, 0 );
    glBindVertexArray( 0 );

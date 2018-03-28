@@ -74,11 +74,13 @@ void main( void )
          vec3 N = posSphUnitaire / dist; //  normaliser N
          vec3  vitReflechieSphUnitaire = reflect( vitSphUnitaire , N );
          vitesseMod = vitReflechieSphUnitaire / bDim;
+         couleurMod.a *= 0.5;
       }
 
       // collision avec le sol ?
       if ( positionMod.z < 0 ) {
          vitesseMod = reflect( vitesseMod, vec3(0.0, 0.0, 1.0) );
+         couleurMod.a *= 0.5;
       }
 
       // appliquer la gravité
