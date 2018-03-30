@@ -27,10 +27,11 @@ void main()
    coins[3] = vec2(  0.5, -0.5 );
    for ( int i = 0 ; i < 4 ; ++i )
    {
-      gl_PointSize = 5.0; // en pixels
+      gl_PointSize = 5; // en pixels
       float fact = 0.025 * gl_PointSize;
       vec2 decalage = coins[i]; // on positionne successivement aux quatre coins
       vec4 pos = vec4( gl_in[0].gl_Position.xy + fact * decalage, gl_in[0].gl_Position.zw );
+
       if (texnumero == 1) {
          float theta = 6*AttribsIn[0].tempsRestant;
          coins[i] = mat2(cos(theta),-sin(theta),

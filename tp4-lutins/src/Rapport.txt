@@ -3,12 +3,20 @@ Indice: pour bien répondre à ces deux questions, essayez de voir si votre rép
 
 Q1: Dans la partie 1, des points de taille fixe sont affichés à l'écran. Leur taille est donnée par la variable gl_PointSize.
     i) Comment faire pour que la taille d'un point varie de façon inverse à sa distance du plan avant du volume de visualisation ?
+        Dans le repère de la caméra, nous avons juste a modifier gl_PointSize avec la formule de l'inverse de la distance, soit 1/gl_in[0].gl_Position.z. Ces modifications seront faites dans le nuanceur de géométrie.
     ii) Donnez l'énoncé GLSL que vous utiliseriez pour implanter ceci.
+        Puisque nous voulons voir l'effet un peu plus intense que 1/gl_in[0].gl_Position.z, il est possible d'ajouter un facteur de 5 (soit la taille qui nous était donnée initialement).
+        La ligne de code est donc: gl_PointSize = 1/(gl_in[0].gl_Position.z) + 5; 
 
 
 
 Q2: Pour afficher une étincelle qui tourne sur elle-même, on a appliqué une matrice de rotation sur les quatre sommets.
     i) Pourrait-on faire tourner l'étincelle en appliquant la même matrice de rotation sur les coordonnées de texture plutôt que sur les coordonnées des sommets?
+        Oui, c'est possible en modifiant les coordonnées des coins de la texture.
     ii) Quel problème observerions-nous alors et comment devrait-il être corrigé?
+        Les textures essayent de remplir le quadrilatère quand elles ne le peuvent pas vraiment. Par exemple, si la texture de l'échiquier devient à la diagonale,
+        les coins du quadrilatère n'auront pas de textures et par défaut, il va essayer de le remplir. Par défaut, les paramètres de GL_TEXTURE_WRAP_S et GL_TEXTURE_WRAP_T
+        sont GL_REPEAT. Pour régler cette erreur, il est possible de ne pas changer les paramètres par défaut par GL_CLAMP_TO_EDGE. Ainsi, on évite les étirements de textures.
+
 
     Afin de facilement répondre à cette question, vous pouvez remplacer (temporairement!) l'image de l'étincelle de ce TP par l'image de l'échiquier du TP3.  Si vous appliquez ensuite la matrice de rotation sur les coordonnées de texture plutôt que sur les coordonnées des sommets, vous pourrez alors très bien voir ce qui se passe.
