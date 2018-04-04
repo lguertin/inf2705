@@ -3,8 +3,13 @@ Q1: L'implantation du modèle d'illumination de Lambert selon ce qui est
     pas très efficace. Dites ce qui pourrait être amélioré et comment vous
     modifieriez le programme actuel afin d'avoir une meilleure implantation.
 
+Réponse Q1:
+	Dans ce tp, nous calculons l'illumination tous les sommets, ce qui peut être dans certains cas inutile. Pour optimiser cette implémentation, nous pourrions omettre de calculer l'illumination sur les sommets qui ne sont pas visible par la camera. Par exemple, éviter de calculer l'illumination derrière le cube quand nous voyons que la face avant. De plus, avec l'ajout de la fonctionnalité du spot, il serait aussi intéressant d'éviter de calculer l'illumination en dehors du spot.
+
 
 Q2: On pourrait vouloir que la texture de l'échiquier se « déplace » sur
     l'objet en fonction du temps, comme si elle glissait sur la surface dans
     une direction donnée. Comment implanteriez-vous cette fonctionnalité?
 
+Réponse Q2:
+	Tout comme dans les jeux 2D (exemple Mario), il est possible d'avoir plusieurs lutins (sprites) qui ont des petits changements entre chacun d'eux. Si nous bouclons sur l'affichage de tous ces sprites, nous allons avoir l'impression que le sprite est en mouvement. Dans le cas de l'échiquier, nous comptons avoir 6 textures de transition où leur seule différence est que la partie du bas est coupée et ajoutée à celle du haut. Nous découperions les deux dernières rangées en parties égales qui s'ajouteront en haut pour enfin revenir avec l'image initiale.

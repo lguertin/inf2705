@@ -81,9 +81,7 @@ vec4 calculerReflexion( in vec3 L, in vec3 N, in vec3 O )
    vec4 ambient = FrontMaterial.emission + FrontMaterial.ambient * LightModel.ambient;
    ambient += FrontMaterial.ambient * LightSource[0].ambient;
 
-   vec4 diffuse = FrontMaterial.diffuse *
-		LightSource[0].diffuse *
-		max(dot(L, N), 0.0);
+   vec4 diffuse = (utiliseCouleur) ? FrontMaterial.diffuse * LightSource[0].diffuse * max(dot(L, N), 0.0): vec4(0.7, 0.7, 0.7, 1.0)* LightSource[0].diffuse * max(dot(L, N), 0.0);
 
 	float reflectionFactor;
 	if(utiliseBlinn)

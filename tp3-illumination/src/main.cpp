@@ -384,25 +384,31 @@ void FenetreTP::initialiser()
 	   0.0, 0.0, 1.0, 	   0.0, 0.0, 1.0, 	   0.0, 0.0, 1.0, 	   0.0, 0.0, 1.0 	 // P4,P5,P7,P6
    };
    
-    GLfloat texturesCoordDe[2*4*6] = {
-	   0.33, 0.0,      0.66, 0.0,       0.66, 0.33,     0.33, 0.33,
-       0.66, 0.0,      1.0, 0.0,        1.0, 0.33,      0.66, 0.33,
-       0.66, 0.33,     1.0, 0.33,       1.0, 0.66,      0.66, 0.66,
-       0.33, 0.33,     0.66, 0.33,      0.66, 0.66,     0.33, 0.66,
-       0.0, 0.33,      0.33, 0.33,      0.33, 0.66,     0.0, 0.66,
-       0.33, 0.66,      0.66, 0.66,     0.66, 1.0,      0.33, 1.0
-   };
+    GLfloat texturesCoordDe[2 * 4 * 6] = {
+        1.0/3, 0.0, 2.0/3, 0.0, 1.0/3, 1.0/3, 2.0/3, 1.0/3,     // 3
+        2.0/3, 0.0, 1.0, 0.0, 2.0/3, 1.0/3, 1.0, 1.0/3,         // 6
+        0.0, 1.0/3, 1.0/3, 1.0/3, 0.0, 2.0/3, 1.0/3, 2.0/3,     // 2
+        1.0/3, 1.0/3, 2.0/3, 1.0/3, 1.0/3, 2.0/3, 2.0/3, 2.0/3, // 1
+        2.0/3, 1.0/3, 1.0, 1.0/3, 2.0/3, 2.0/3, 1.0, 2.0/3,     // 5
+        1.0/3, 2.0/3, 2.0/3, 2.0/3, 1.0/3, 1.0, 2.0/3, 1.0,     // 4
+};
 
-   GLfloat texturesCoordEchec[2*8] = {
-	   0.0, 0.0, 3.0, 0.0, 3.0, 3.0, 0.0, 3.0,
-       0.0, 0.0, 0.0, 3.0, 3.0, 3.0, 3.0, 0.0
-   };
+   GLfloat texturesCoordEchec[2 * 4 * 6] = {
+		0.0, 0.0, 3.0, 0.0, 0.0, 3.0, 3.0, 3.0,
+		0.0, 0.0, 3.0, 0.0, 0.0, 3.0, 3.0, 3.0,
+		0.0, 0.0, 3.0, 0.0, 0.0, 3.0, 3.0, 3.0,
+		0.0, 0.0, 3.0, 0.0, 0.0, 3.0, 3.0, 3.0,
+		0.0, 0.0, 3.0, 0.0, 0.0, 3.0, 3.0, 3.0,
+		0.0, 0.0, 3.0, 0.0, 0.0, 3.0, 3.0, 3.0
+};
    
-    GLfloat texturesCoordAutre[2*4] = {
-	   0.0, 0.0,
-       1.0, 0.0,
-       1.0, 1.0,
-       0.0, 1.0
+    GLfloat texturesCoordAutre[2 * 4 * 6] = {
+	   0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0,
+       0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0,
+       0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0,
+       0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0,
+       0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0,
+       0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0
    };
    // allouer les objets OpenGL
    glGenVertexArrays( 2, vao );
@@ -433,7 +439,7 @@ void FenetreTP::initialiser()
     // coordonnees de textures pour autres 
    glBindBuffer( GL_ARRAY_BUFFER, vbo[4] );
    glBufferData( GL_ARRAY_BUFFER, sizeof(texturesCoordAutre), texturesCoordAutre, GL_STATIC_DRAW );
-   glVertexAttribPointer( locTexCoord, 3, GL_FLOAT, GL_FALSE, 0, 0 );
+   glVertexAttribPointer( locTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0 );
    glEnableVertexAttribArray(locTexCoord);
 
    glBindVertexArray(0);
@@ -512,7 +518,15 @@ void afficherModele()
       default:
       case 1:
          // afficher le cube
+
+          
          glBindVertexArray( vao[0] );
+         if (varsUnif.texnumero >= 1) {
+             glBindBuffer(GL_ARRAY_BUFFER, vbo[varsUnif.texnumero + 1]);
+             if (varsUnif.texnumero == 4)
+                 glBindBuffer(GL_ARRAY_BUFFER, vbo[varsUnif.texnumero]);
+             glVertexAttribPointer(locTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+         }
          glDrawArrays( GL_TRIANGLE_STRIP,  0, 4 );
          glDrawArrays( GL_TRIANGLE_STRIP,  4, 4 );
          glDrawArrays( GL_TRIANGLE_STRIP,  8, 4 );
