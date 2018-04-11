@@ -274,7 +274,8 @@ void chargerNuanceurs()
                 << "#define INDICEFONCTION " << etat.indiceFonction << std::endl
                 << "#define INDICETEXTURE " << etat.indiceTexture << std::endl
                 << "#define INDICEDIFFUSE " << etat.indiceDiffuse << std::endl
-                << "#define AFFICHENORMALES " << etat.afficheNormales << std::endl;
+                << "#define AFFICHENORMALES " << etat.afficheNormales << std::endl
+                << "#line 1" << std::endl;
       std::string preambulestr = preambule.str();
       const char *preambulechar = preambulestr.c_str();
 
@@ -464,7 +465,17 @@ void FenetreTP::conclure()
 void definirProjection( int OeilMult, int w, int h ) // 0: mono, -1: oeil gauche, +1: oeil droit
 {
    // partie 2: utiliser plutôt Frustum() pour le stéréo
-   matrProj.Perspective( 35.0, (GLdouble) w / (GLdouble) h, vue.zavant, vue.zarriere );
+   const GLdouble resolution = 100.0; // pixels par pouce
+   GLdouble oeilDecalage = OeilMult * vue.dip/2.0;
+   GLdouble proportionProfondeur = vue.zavant / vue.zecran;  // la profondeur du plan de parallaxe nulle
+
+   matrProj.Frustum( (-0.5 * w / resolution - oeilDecalage ) * proportionProfondeur,
+                     ( 0.5 * w / resolution - oeilDecalage ) * proportionProfondeur,
+                     (-0.5 * h / resolution                ) * proportionProfondeur,
+                     ( 0.5 * h / resolution                ) * proportionProfondeur,
+                     vue.zavant, vue.zarriere );
+   matrProj.Translate( -oeilDecalage, 0.0, 0.0 );
+   glUniformMatrix4fv( locmatrProj, 1, GL_FALSE, matrProj );
 }
 
 void afficherDecoration()
@@ -604,22 +615,33 @@ void FenetreTP::afficherScene()
    switch ( vue.affichageStereo )
    {
    case 0: // mono
+      redimensionner(largeur_, hauteur_);
       definirProjection( 0, largeur_, hauteur_ );
-      glUniformMatrix4fv( locmatrProj, 1, GL_FALSE, matrProj );
       afficherModele();
       break;
 
    case 1: // stéréo anaglyphe
       // partie 2: à modifier pour afficher en anaglyphe
-      definirProjection( 0, largeur_, hauteur_ );
-      glUniformMatrix4fv( locmatrProj, 1, GL_FALSE, matrProj );
+      definirProjection( -1, largeur_, hauteur_);
+      glColorMask( GL_TRUE, GL_FALSE, GL_FALSE, GL_TRUE );
       afficherModele();
+
+      glClear( GL_DEPTH_BUFFER_BIT );
+      definirProjection( +1, largeur_, hauteur_);
+      glColorMask( GL_FALSE, GL_TRUE, GL_TRUE, GL_TRUE );
+      afficherModele();
+
+      glColorMask( GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE );
       break;
 
    case 2: // stéréo double
       // partie 2: à modifier pour afficher en stéréo double
+      glViewport( 0, 0, largeur_ / 2, hauteur_ );
       definirProjection( 0, largeur_, hauteur_ );
-      glUniformMatrix4fv( locmatrProj, 1, GL_FALSE, matrProj );
+      afficherModele();
+
+      glViewport( largeur_ / 2, 0, largeur_ / 2 , hauteur_ );
+      definirProjection( 0, largeur_, hauteur_ );
       afficherModele();
       break;
    }

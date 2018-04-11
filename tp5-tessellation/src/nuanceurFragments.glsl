@@ -72,7 +72,7 @@ void main( void )
          coul += FrontMaterial.diffuse * LightSource.diffuse * NdotL;
 #else
          // la composante diffuse (kd) provient de la texture 'textureCoul'
-         //coul += ...
+         coul += texture(textureCoul, AttribsIn.texCoord) * LightSource.diffuse * NdotL;
 #endif
 
          // ajouter la contribution de la composante spéculaire

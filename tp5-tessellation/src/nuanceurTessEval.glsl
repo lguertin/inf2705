@@ -97,7 +97,9 @@ float FctMath( vec2 uv ) // uv est dans [-bDim.x,bDim.x] X [-bDim.y,bDim.y]
 // déplacement du plan selon la texture
 float FctText( vec2 texCoord )
 {
-   return 0.0; // à modifier!
+   
+   vec4 texel = texture( textureDepl, texCoord );
+   return length(texel) * facteurDeform / 10.0; // à modifier!
 }
 
 void main( void )
@@ -108,34 +110,36 @@ void main( void )
    vec4 posModel = interpole( gl_in[0].gl_Position, gl_in[1].gl_Position, gl_in[2].gl_Position, gl_in[3].gl_Position );
 
    // générer (en utilisant directement posModel.xy) les coordonnées de texture plutôt que les interpoler
-   //AttribsOut.texCoord = ...;
+   AttribsOut.texCoord = posModel.xy;
 
 #if ( INDICEFONCTION != 0 )
 
    // Déplacement selon la fonction mathématique (partie 1)
    // étape 1: mettre xy entre -bDim et +bDim
-   posModel.xy = posModel.xy*bDim.xy*2;
-   posModel.xy -= bDim.xy;
+   posModel.xy = posModel.xy*bDim.xy*2 - bDim.xy;
+   // posModel.xy -= bDim.xy;
 
    // étape 2: évaluer le déplacement
    // xyz = FctMath( ... );
    posModel.z = FctMath(posModel.xy);
 
    // étape 3: calculer la normale
-   vec3 N = vec3((FctMath(vec2(posModel.x + eps, posModel.y)) - FctMath(vec2(posModel.x - eps, posModel.y)))/(2 * eps),
+   vec3 N = normalize(vec3((FctMath(vec2(posModel.x + eps, posModel.y)) - FctMath(vec2(posModel.x - eps, posModel.y)))/(2 * eps),
                   (FctMath(vec2(posModel.x, posModel.y  + eps)) - FctMath(vec2(posModel.x, posModel.y - eps)))/(2 * eps),
-                  -1.0);
+                  -1.0));
 
 #else
 
    // déplacement selon la texture (partie 2)
    // mettre xy entre -bDim et +bDim
-   // ...
+   posModel.xy = posModel.xy*bDim.xy*2 - bDim.xy;
    // évaluer le déplacement
-   // ....z = FctText( ... );
+   posModel.z = FctText(posModel.xy);
 
    // calculer la normale
-   vec3 N = vec3(0.,0.,1.); // à modifier
+   vec3 N = normalize(vec3((FctText(vec2(posModel.x + eps, posModel.y)) - FctText(vec2(posModel.x - eps, posModel.y)))/(2 * eps),
+                  (FctText(vec2(posModel.x, posModel.y  + eps)) - FctText(vec2(posModel.x, posModel.y - eps)))/(2 * eps),
+                  -1.0));
 
 #endif
 
