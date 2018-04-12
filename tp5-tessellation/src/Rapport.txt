@@ -5,6 +5,8 @@ Q1: Vous avez probablement remarqué que même en demandant un très grand
     avec glGet() et elle doit être au moins 64.)
     Que doit-on alors faire si on veut, malgré tout, une tessellation deux
     fois plus fine dans chaque direction?
+Réponse:
+	Puisque nous sommes limités par la carte graphique en place, une alternative pour avoir un niveau de tessellation deux fois plus fin serait de doubler le nombre de sommets de nos surfaces. En envoyant une augmentation du nombre de sommets et du nombre de connectivités au nuanceur de Tessellation, il pourra ensuite faire son travail et approximer les autres points en subdivisant comme il le faisait avant de doubler le nombre de données envoyées.
 
 
 Q2: Comment implanter la visualisation d'une surface quelconque exprimée de
@@ -20,3 +22,5 @@ Q2: Comment implanter la visualisation d'une surface quelconque exprimée de
                (4/3)^s*sin(t)*sin(t)*sin(s),
                (4/3)^s*sin(t)*cos(t) );
     avec s = 0 .. 1, t = 0 .. 2*PI.
+Réponse:
+	
