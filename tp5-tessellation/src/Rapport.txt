@@ -23,4 +23,6 @@ Q2: Comment implanter la visualisation d'une surface quelconque exprimée de
                (4/3)^s*sin(t)*cos(t) );
     avec s = 0 .. 1, t = 0 .. 2*PI.
 Réponse:
+	En utilisant la fonction, nous pouvons transformer chaque point donnés en coordonnées sphériques. De cette façon nous ne traitons plus nos points sur un cartésien que ne peut que retourner des valeurs de z. Ainsi, avec les paramètres xy transformés, nous pouvons ensuite les introduire dans la fonction S(s,t) à 3 coordonnées puisque xy sont devenu nos nouveau s (theta) et t (phi) respectivement.
+	
 	
